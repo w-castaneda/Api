@@ -5,10 +5,11 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      db:
-        condition: service_healthy
-    env_file:
-      - .env
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/api_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Ch@to2023
     networks:
       - api_db_network
 
