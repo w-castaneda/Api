@@ -73,4 +73,24 @@ public class UsuarioController {
          UsuarioDTO usuarioSavedDTO = UsuarioDTO.fromEntity(usuario);
         return ResponseEntity.status(201).body(usuarioSavedDTO);
     }
+
+    @PostMapping("/batch")
+    @Operation(summary = "create users", description = "Creates a list of new users")
+    @ApiResponse(responseCode = "201", description = "user created")
+    public ResponseEntity<List<UsuarioDTO>> savedUsuarios(@RequestBody @Valid List<UsuarioDTO> usuariosDTO) {
+
+        logger.info("Saving list of users");
+        // Guardamos la lista de usuarios
+        List<Usuario> savedUsuarios = usuariosDTO.stream()
+                .map(UsuarioDTO::toEntity)
+                .collect(Collectors.toList());
+
+        logger .info("Saving users to database");
+        // Convertimos las entidades guardadas de vuelta a DTOs
+        List<UsuarioDTO> usuariosSavedDTOs = savedUsuarios.stream()
+                .map(UsuarioDTO::fromEntity)
+                .collect(Collectors.toList());
+    logger .info("Users saved successfully");
+        return ResponseEntity.status(201).body(usuariosSavedDTOs);
+    }
 }

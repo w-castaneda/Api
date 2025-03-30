@@ -28,6 +28,10 @@ public class UsuarioService {
         return userRepository.save(usuario);
     }
 
+    public List<Usuario> savedUsuarios(List<Usuario> usuarios) {
+        return userRepository.saveAll(usuarios);
+    }
+
     public void deleteUsuario(Long id) {
         userRepository.deleteById(id);
     }
