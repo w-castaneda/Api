@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    ports:
+      - "9090:9090"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - api_db_network
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: api_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Ch@to2023
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d api_db" ]
+      interval: 10s
+      retries: 5
+    ports:
+      - "5432:5432"
+    networks:
+      - api_db_network
+
+networks:
+  api_db_network:
