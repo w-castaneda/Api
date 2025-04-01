@@ -3,6 +3,7 @@ package com.rest.service.Api.controller;
 import com.rest.service.Api.dto.UsuarioDTO;
 import com.rest.service.Api.model.Usuario;
 import com.rest.service.Api.service.UsuarioService;
+import io.micrometer.core.instrument.Counter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,8 +27,12 @@ public class UsuarioController {
 
     private final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 
-    public UsuarioController(UsuarioService usuarioService) {
+    // Contador para el endpoint de obtener usuario por ID
+    private final Counter customEndpointCounter;
+
+    public UsuarioController(UsuarioService usuarioService, Counter usuarioGetCounter, Counter customEndpointCounter) {
         this.usuarioService = usuarioService;
+        this.customEndpointCounter = customEndpointCounter;
     }
 
     @GetMapping
@@ -48,6 +53,11 @@ public class UsuarioController {
     @ApiResponse(responseCode = "404", description = "User not found")
     public UsuarioDTO getUsuarioById(@PathVariable final  Long id) {
         logger.info("Fetching user with id: {}", id);
+
+        // Incrementa el contador cada vez que se consulta este endpoint
+        customEndpointCounter.increment();
+        logger.info("Incrementando contador de usuarios");
+
         try {
             Thread.sleep(2000);
             Usuario usuario = usuarioService.getUsuarioById(id);
